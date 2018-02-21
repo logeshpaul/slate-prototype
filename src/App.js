@@ -1,20 +1,13 @@
 import React, { Component } from 'react';
-import Plain from 'slate-plain-serializer';
-// import ExportHTML from 'slate-html-serializer';
+import Html from 'slate-html-serializer'
 // import EditTable from 'slate-edit-table'
-
-import { Editor } from 'slate-react'
-import { Value } from 'slate'
-
+import { Editor } from 'slate-react';
 import EditorData from './EditorData';
-
-import logo from './logo.svg';
 import './App.css';
 
-console.log(EditorData);
 
-const existingValue = JSON.parse(localStorage.getItem('content'));
-const initialValue = Value.fromJSON(existingValue ||  EditorData );
+//const existingValue = JSON.parse(localStorage.getItem('content'));
+const initialValue = localStorage.getItem('content') || "";
 
 function MarkHotkey(options) {
   const { type, key } = options
@@ -39,14 +32,91 @@ const plugins = [
   MarkHotkey({ key: 'u', type: 'underline' }),
 ]
 
+// Add a dictionary of mark tags.
+const MARK_TAGS = {
+  em: 'italic',
+  strong: 'bold',
+  u: 'underline',
+}
+
+// Refactor block tags into a dictionary for cleanliness.
+const BLOCK_TAGS = {
+  p: 'paragraph',
+  blockquote: 'quote',
+  pre: 'code',
+}
+
+const rules = [
+  {
+    // Switch deserialize to handle more blocks...
+    deserialize(el, next) {
+      const type = BLOCK_TAGS[el.tagName.toLowerCase()]
+      if (!type) return
+      return {
+        object: 'block',
+        type: type,
+        nodes: next(el.childNodes),
+      }
+    },
+    // Switch serialize to handle more blocks...
+    serialize(obj, children) {
+      if (obj.object != 'block') return
+      switch (obj.type) {
+        case 'paragraph':
+          return <p>{children}</p>
+        case 'quote':
+          return <blockquote>{children}</blockquote>
+        case 'code':
+          return (
+            <pre>
+              <code>{children}</code>
+            </pre>
+          )
+      }
+    },
+  },
+  // Add a new rule that handles marks...
+  {
+    deserialize(el, next) {
+      const type = MARK_TAGS[el.tagName.toLowerCase()]
+      if (!type) return
+      return {
+        object: 'mark',
+        type: type,
+        nodes: next(el.childNodes),
+      }
+    },
+    serialize(obj, children) {
+      if (obj.object != 'mark') return
+      switch (obj.type) {
+        case 'bold':
+          return <strong>{children}</strong>
+        case 'italic':
+          return <em>{children}</em>
+        case 'underline':
+          return <u>{children}</u>
+        case 'code':
+          return (
+            <pre>
+              <code>{children}</code>
+            </pre>
+          )
+      }
+    },
+  },
+]
+
+// Create a new serializer instance with our `rules` from above.
+const html = new Html({ rules });
+
 class App extends Component {
   state = {
-    value: initialValue,
+    value: html.deserialize(initialValue),
   }
  
   onChange = ({ value }) => {
     if (value.document != this.state.value.document) {
-      const content = JSON.stringify(value.toJSON());
+      const content = html.serialize(value)
       localStorage.setItem('content', content);
     }
 
@@ -68,9 +138,25 @@ class App extends Component {
         value={this.state.value}
         onChange={this.onChange}
         onKeyDown={this.onKeyDown}
+        renderNode={this.renderNode}
         renderMark={this.renderMark}
       />
     )
+  }
+
+  renderNode = props => {
+    switch (props.node.type) {
+      case 'code':
+        return (
+          <pre {...props.attributes}>
+            <code>{props.children}</code>
+          </pre>
+        )
+      case 'paragraph':
+        return <p {...props.attributes}>{props.children}</p>
+      case 'quote':
+        return <blockquote {...props.attributes}>{props.children}</blockquote>
+    }
   }
 
   renderMark = props => {
@@ -81,8 +167,6 @@ class App extends Component {
         return <code>{props.children}</code>
       case 'italic':
         return <em>{props.children}</em>
-      case 'strikethrough':
-        return <del>{props.children}</del>
       case 'underline':
         return <u>{props.children}</u>
     }
