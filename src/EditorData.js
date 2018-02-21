@@ -18,7 +18,7 @@ const EditorData = {
             "leaves":[
               {
                 "object":"leaf",
-                "text":"LP Legend:",
+                "text":"LP Title:",
                 "marks":[
                   {
                     "object":"mark",
