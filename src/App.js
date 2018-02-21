@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Plain from 'slate-plain-serializer';
 // import ExportHTML from 'slate-html-serializer';
 // import EditTable from 'slate-edit-table'
 
@@ -8,7 +7,6 @@ import { Value } from 'slate'
 
 import EditorData from './EditorData';
 
-import logo from './logo.svg';
 import './App.css';
 
 console.log(EditorData);
@@ -21,7 +19,7 @@ function MarkHotkey(options) {
  
   return {
     onKeyDown(event, change) {
-      if (!event.ctrlKey || event.key != key) return
+      if (!event.ctrlKey || event.key !== key) return
       event.preventDefault()
 
       change.toggleMark(type)
@@ -45,7 +43,7 @@ class App extends Component {
   }
  
   onChange = ({ value }) => {
-    if (value.document != this.state.value.document) {
+    if (value.document !== this.state.value.document) {
       const content = JSON.stringify(value.toJSON());
       localStorage.setItem('content', content);
     }
@@ -54,7 +52,7 @@ class App extends Component {
   }
 
   onKeyDown = (event, change) => {
-    if (event.key != 'b' || !event.ctrlKey) return
+    if (event.key !== 'b' || !event.ctrlKey) return
     event.preventDefault()
     change.toggleMark('bold');
     return true
@@ -85,6 +83,8 @@ class App extends Component {
         return <del>{props.children}</del>
       case 'underline':
         return <u>{props.children}</u>
+      default: 
+        return ''
     }
   }
 }
