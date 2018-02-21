@@ -53,6 +53,9 @@ function renderNode(props: NodeProps): React.Node {
   }
 }
 
+const existingValue = JSON.parse(localStorage.getItem('content'));
+const initialValue = Value.fromJSON(existingValue ||  INITIAL_VALUE );
+
 class App extends Component {
   submitChange: Function;
     editorREF: Editor;
@@ -95,6 +98,14 @@ setEditorComponent = (ref: Editor) => {
 };
 
 onChange = ({ value }) => {
+
+  console.log(value);
+  
+  // if (value.document !== this.state.value.document) {
+  //   const content = JSON.stringify(value.toJSON());
+  //   localStorage.setItem('content', content);
+  // }
+
     this.setState({
         value
     });
@@ -149,7 +160,7 @@ onSetAlign = (event, align) => {
             placeholder={'Enter some text...'}
             renderNode={renderNode}
             plugins={plugins}
-            value={value}
+            value={this.state.value}
             onChange={this.onChange}
         />
     </div>
