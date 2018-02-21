@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+//import ExportHTML from 'slate-html-serializer';
+
 import { Editor } from 'slate-react'
 import { Value } from 'slate'
-import ExportHTML from 'slate-html-serializer';
+import EditorData from './EditorData';
+
 
 // import EditTable from 'slate-edit-table'
 
@@ -12,116 +15,7 @@ import './App.css';
 const existingValue = JSON.parse(localStorage.getItem('content'))
 // Create our initial value...
 const initialValue = Value.fromJSON(
-  existingValue || {
-    "document": {
-      "nodes": [
-        {
-          "object": "block",
-          "type": "paragraph",
-          "nodes": [
-            {
-              "object": "text",
-              "leaves": [
-                {
-                  "text": "Legend:",
-                  "marks": [
-                    {
-                      "type": "bold"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "object": "block",
-          "type": "paragraph",
-          "nodes": [
-            {
-              "object": "text",
-              "leaves": [
-                {
-                  "text": "Black text with gray highlights – represents the protocol template standard text. Please check and confirm if the text is applicable for this study. Whenever applicable, the standard text as provided in the template must be used without modification of the wording. If not applicable, the standard text should be removed (partially or completely) as needed. If these parts need modifications, please use Tracked change modus or comment bubbles."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "object": "block",
-          "type": "paragraph",
-          "nodes": [
-            {
-              "object": "text",
-              "leaves": [
-                {
-                  "text":
-                  "Black text with yellow highlights – represents the part of protocol which should be replaced with study specific information.",
-                  "marks": [
-                    {
-                      "type": "bold"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "object": "block",
-          "type": "paragraph",
-          "nodes": [
-            {
-              "object": "text",
-              "leaves": [
-                {
-                  "text": "Green text – represent the COSprot generated standards coming from the Structured Study Design workbook (SSD wb). Changes to the green text need to be marked with the green highlighting or with a comment, so that those are updated in the SSD wb and not lost within the next COSprot protocol re-generation. These parts of protocol will be replaced with updated standards after each COSprot protocol creation and showed again as green text.After SSD wb update, standards will be generated and maintained in later CSP development points. CoE (Centre of Excellence) will do the modifications to SSD workbook, please mark needed modifications here with green highlighting or with comment bubbles."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "object": "block",
-          "type": "paragraph",
-          "nodes": [
-            {
-              "object": "text",
-              "leaves": [
-                {
-                  "text": "Any comments left on the green text would be lost during the COSprot protocol re-generation. Comments can be copied again manually after the generation process, but whenever possible please leave the comments on the black text or black text with gray highlights."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "object": "block",
-          "type": "paragraph",
-          "nodes": [
-            {
-              "object": "text",
-              "leaves": [
-                {
-                  "text": "Blue text",
-                  "marks": [
-                    {
-                      "type": "italic"
-                    }
-                  ]
-                },
-                {
-                  "text": " – represent the explanations and instructions for the CSP author. All blue text must be deleted upon CSP preparation."
-                }
-              ]
-            }
-          ]
-        },
-      ]
-    }
-  }
-);
+  existingValue ||  EditorData );
 
 function MarkHotkey(options) {
   const { type, key } = options
