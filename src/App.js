@@ -1,91 +1,159 @@
 import React, { Component } from 'react';
-// import ExportHTML from 'slate-html-serializer';
-// import EditTable from 'slate-edit-table'
-
-import { Editor } from 'slate-react'
+import ReactDOM from 'react-dom';
+import { type Node } from 'slate';
+import { Editor } from 'slate-react';
 import { Value } from 'slate'
 
-import EditorData from './EditorData';
+import EditTable from 'slate-edit-table';
+import PluginEditTable from 'slate-edit-table';
+
+import INITIAL_VALUE from './value';
 
 import './App.css';
 
-console.log(EditorData);
+const tablePlugin = PluginEditTable();
+const plugins = [tablePlugin];
 
-const existingValue = JSON.parse(localStorage.getItem('content'));
-const initialValue = Value.fromJSON(existingValue ||  EditorData );
+type NodeProps = {
+  attributes: Object,
+  node: Node,
+  children: React.Node
+};
 
-function MarkHotkey(options) {
-  const { type, key } = options
- 
-  return {
-    onKeyDown(event, change) {
-      if (!event.ctrlKey || event.key !== key) return
-      event.preventDefault()
+function renderNode(props: NodeProps): React.Node {
+  const { node, attributes, children } = props;
+  let textAlign;
 
-      change.toggleMark(type)
-      return true
-    },
+  switch (node.type) {
+      case 'table':
+          return (
+              <table>
+                  <tbody {...attributes}>{children}</tbody>
+              </table>
+          );
+      case 'table_row':
+          return <tr {...attributes}>{children}</tr>;
+      case 'table_cell':
+          textAlign = node.get('data').get('textAlign');
+          textAlign =
+              ['left', 'right', 'center'].indexOf(textAlign) === -1
+                  ? 'left'
+                  : textAlign;
+          return (
+              <td style={{ textAlign }} {...attributes}>
+                  {children}
+              </td>
+          );
+      case 'paragraph':
+          return <p {...attributes}>{children}</p>;
+      case 'heading':
+          return <h1 {...attributes}>{children}</h1>;
+      default:
+          return null;
   }
 }
 
-// Plugins
-const plugins = [
-  MarkHotkey({ key: 'b', type: 'bold' }),
-  MarkHotkey({ key: '`', type: 'code' }),
-  MarkHotkey({ key: 'i', type: 'italic' }),
-  MarkHotkey({ key: 's', type: 'strikethrough' }),
-  MarkHotkey({ key: 'u', type: 'underline' }),
-]
-
 class App extends Component {
-  state = {
-    value: initialValue,
-  }
- 
-  onChange = ({ value }) => {
-    if (value.document !== this.state.value.document) {
-      const content = JSON.stringify(value.toJSON());
-      localStorage.setItem('content', content);
-    }
+  submitChange: Function;
+    editorREF: Editor;
+    state = {
+        value: INITIAL_VALUE
+    };
 
-    this.setState({ value })
-  }
+  renderTableToolbar() {
+    return (
+        <div>
+            <button onMouseDown={this.onInsertColumn}>Insert Column</button>
+            <button onMouseDown={this.onInsertRow}>Insert Row</button>
+            <button onMouseDown={this.onRemoveColumn}>Remove Column</button>
+            <button onMouseDown={this.onRemoveRow}>Remove Row</button>
+            <button onMouseDown={this.onRemoveTable}>Remove Table</button>
+            <br />
+            <button onMouseDown={e => this.onSetAlign(e, 'left')}>
+                Set align left
+            </button>
+            <button onMouseDown={e => this.onSetAlign(e, 'center')}>
+                Set align center
+            </button>
+            <button onMouseDown={e => this.onSetAlign(e, 'right')}>
+                Set align right
+            </button>
+        </div>
+    );
+}
 
-  onKeyDown = (event, change) => {
-    if (event.key !== 'b' || !event.ctrlKey) return
-    event.preventDefault()
-    change.toggleMark('bold');
-    return true
-  }
+renderNormalToolbar() {
+    return (
+        <div>
+            <button onClick={this.onInsertTable}>Insert Table</button>
+        </div>
+    );
+}
+setEditorComponent = (ref: Editor) => {
+    this.editorREF = ref;
+    this.submitChange = ref.change;
+};
+
+onChange = ({ value }) => {
+    this.setState({
+        value
+    });
+};
+
+onInsertTable = event => {
+    event.preventDefault();
+    this.submitChange(tablePlugin.changes.insertTable);
+};
+
+onInsertColumn = event => {
+    event.preventDefault();
+    this.submitChange(tablePlugin.changes.insertColumn);
+};
+
+onInsertRow = event => {
+    event.preventDefault();
+    this.submitChange(tablePlugin.changes.insertRow);
+};
+
+onRemoveColumn = event => {
+    event.preventDefault();
+    this.submitChange(tablePlugin.changes.removeColumn);
+};
+
+onRemoveRow = event => {
+    event.preventDefault();
+    this.submitChange(tablePlugin.changes.removeRow);
+};
+
+onRemoveTable = event => {
+    event.preventDefault();
+    this.submitChange(tablePlugin.changes.removeTable);
+};
+
+onSetAlign = (event, align) => {
+    event.preventDefault();
+    this.submitChange(tablePlugin.changes.setColumnAlign, align);
+};
 
   render() {
-    return (
-      <Editor
-        className="editor"
-        plugins={plugins}
-        value={this.state.value}
-        onChange={this.onChange}
-        onKeyDown={this.onKeyDown}
-        renderMark={this.renderMark}
-      />
-    )
-  }
+    const { value } = this.state;
+    const isInTable = tablePlugin.utils.isSelectionInTable(value);
+    const isOutTable = tablePlugin.utils.isSelectionOutOfTable(value);
 
-  renderMark = props => {
-    switch (props.mark.type) {
-      case 'bold':
-        return <strong>{props.children}</strong>
-      case 'code':
-        return <code>{props.children}</code>
-      case 'italic':
-        return <em>{props.children}</em>
-      case 'strikethrough':
-        return <del>{props.children}</del>
-      case 'underline':
-        return <u>{props.children}</u>
-      default: 
-        return ''
-    }
+    return (
+      <div>
+        {isInTable ? this.renderTableToolbar() : null}
+        {isOutTable ? this.renderNormalToolbar() : null}
+        <Editor
+            ref={this.setEditorComponent}
+            placeholder={'Enter some text...'}
+            renderNode={renderNode}
+            plugins={plugins}
+            value={value}
+            onChange={this.onChange}
+        />
+    </div>
+    )
   }
 }
 
