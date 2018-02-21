@@ -1,0 +1,17 @@
+#ignore npm React packages and everything else under node modules
+/npm-debug.log
+node_modules/
+
+#ignore vscode configs
+.vscode/
+
+# OS or Editor folders
+.DS_Store
+.cache
+.project
+.settings
+.tags
+Thumbs.db
+tags
+*.zip
+.idea
