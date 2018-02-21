@@ -202,7 +202,134 @@ const EditorData = {
               },
               {
                 "object":"leaf",
-                "text":" protocol re-generation. These parts of protocol will be replaced with updated standards after each COSprot protocol creation and showed again as green text.After SSD wb update, standards will be generated and maintained in later CSP development points. CoE (Centre of Excellence) will do the modifications to SSD workbook, please mark needed modifications here with green highlighting or with comment bubbles.",
+                "text":" protocol re-generation. ",
+                "marks":[
+
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "object":"block",
+        "type":"paragraph",
+        "isVoid":false,
+        "data":{
+
+        },
+        "nodes":[
+          {
+            "object":"text",
+            "leaves":[
+              {
+                "object":"leaf",
+                "text":"",
+                "marks":[
+
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "object":"block",
+        "type":"paragraph",
+        "isVoid":false,
+        "data":{
+
+        },
+        "nodes":[
+          {
+            "object":"text",
+            "leaves":[
+              {
+                "object":"leaf",
+                "text":"These parts of protocol will be replaced with updated standards after each COSprot protocol creation and showed again as green text.After SSD wb update, standards will be generated and maintained in later CSP development points. ",
+                "marks":[
+                  {
+                    "object":"mark",
+                    "type":"code",
+                    "data":{
+
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "object":"block",
+        "type":"paragraph",
+        "isVoid":false,
+        "data":{
+
+        },
+        "nodes":[
+          {
+            "object":"text",
+            "leaves":[
+              {
+                "object":"leaf",
+                "text":"",
+                "marks":[
+
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "object":"block",
+        "type":"paragraph",
+        "isVoid":false,
+        "data":{
+
+        },
+        "nodes":[
+          {
+            "object":"text",
+            "leaves":[
+              {
+                "object":"leaf",
+                "text":"CoE (Centre of Excellence)",
+                "marks":[
+                  {
+                    "object":"mark",
+                    "type":"bold",
+                    "data":{
+
+                    }
+                  }
+                ]
+              },
+              {
+                "object":"leaf",
+                "text":" will do the ",
+                "marks":[
+
+                ]
+              },
+              {
+                "object":"leaf",
+                "text":"modifications to SSD workboo",
+                "marks":[
+                  {
+                    "object":"mark",
+                    "type":"strikethrough",
+                    "data":{
+
+                    }
+                  }
+                ]
+              },
+              {
+                "object":"leaf",
+                "text":"k, please mark needed modifications here with green highlighting or with comment bubbles.",
                 "marks":[
 
                 ]
@@ -248,7 +375,13 @@ const EditorData = {
                 "object":"leaf",
                 "text":"Any comments left on the green text would be lost during the COSprot protocol re-generation. Comments can be copied again manually after the generation process, but whenever possible please leave the comments on the black text or black text with gray highlights.",
                 "marks":[
+                  {
+                    "object":"mark",
+                    "type":"underline",
+                    "data":{
 
+                    }
+                  }
                 ]
               }
             ]

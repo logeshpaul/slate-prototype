@@ -10,6 +10,7 @@
     "slate": "^0.32.4",
     "slate-edit-table": "^0.14.3",
     "slate-html-serializer": "^0.5.4",
+    "slate-plain-serializer": "^0.5.4",
     "slate-react": "^0.11.4"
   },
   "scripts": {
